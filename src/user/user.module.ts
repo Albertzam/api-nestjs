@@ -41,7 +41,7 @@ export class UserModule {
       .registerUser({
         nombre: 'Jose',
         apellido: 'Zamarripa',
-        imagen: 'https://images2.imgbox.com/92/a6/fCvuavWs_o.jpg',
+        imagen: '',
         email: 'jose@gmail.com',
         password: '13Demarzo.',
         roles: ['MAESTRO'],
