@@ -6,6 +6,7 @@ import { IUserGeneral } from 'src/interface/prof.interface';
 import { user } from 'src/interface/user.interface';
 import { MongoRepository } from 'typeorm';
 import * as bycript from 'bcrypt';
+import { IEmail } from 'src/interface/course.interface';
 @Injectable()
 export class UserService {
   constructor(
@@ -54,6 +55,21 @@ export class UserService {
       return {
         ...createUser,
         password: undefined,
+      };
+    }
+  }
+
+  async checkEmail(email: IEmail) {
+    const emailCheck = await this.userRepository.findOne({
+      email: email.email,
+    });
+    if (emailCheck) {
+      return {
+        message: 'Este email ya esta registrado',
+      };
+    } else {
+      return {
+        message: 'Email valido',
       };
     }
   }

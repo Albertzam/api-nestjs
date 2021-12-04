@@ -6,13 +6,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { IUserGeneral } from 'src/interface/prof.interface';
 import { UserService } from './user.service';
 import { Auth } from '../decorator';
 import { AppActions, AppPossession, generalResources } from '../roles';
 import { UserGeneralDTO } from 'src/dto/prof';
-import { user } from 'src/interface/user.interface';
 import { UserLogin } from 'src/dto/user.dto';
+import { IEmail } from 'src/interface/course.interface';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -23,10 +22,15 @@ export class UserController {
     return await this.userService.login(user);
   }
 
-  @Post('register')
+  @Post('/register')
   @UsePipes(ValidationPipe)
   async register(@Body() user: UserGeneralDTO) {
     return await this.userService.registerUser(user);
+  }
+
+  @Post('/check-email')
+  async checkEmail(@Body() email: IEmail) {
+    return await this.userService.checkEmail(email);
   }
 
   @Auth({

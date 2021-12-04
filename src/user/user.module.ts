@@ -13,16 +13,6 @@ dotenv.config();
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserGeneral]),
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      url: process.env.MONGO_URL,
-      entities: [],
-      synchronize: true,
-      useNewUrlParser: true,
-      logging: true,
-      useUnifiedTopology: true,
-      autoLoadEntities: true,
-    }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
@@ -39,15 +29,31 @@ export class UserModule {
   async onModuleInit(): Promise<void> {
     this.appService
       .registerUser({
-        nombre: 'Jose',
-        apellido: 'Zamarripa',
+        nombre: 'Maestro',
+        apellido: 'Maestro',
         imagen: '',
-        email: 'jose@gmail.com',
+        email: 'maestro@maestro.com',
         password: '13Demarzo.',
         roles: ['MAESTRO'],
       })
       .then(() => {
-        Logger.debug('User admin created');
+        Logger.debug('User MAESTRO created');
+      })
+      .catch((error) => {
+        Logger.error(error);
+      });
+
+    this.appService
+      .registerUser({
+        nombre: 'Alumno',
+        apellido: 'Alumno',
+        imagen: '',
+        email: 'alumno@alumno.com',
+        password: '13Demarzo.',
+        roles: ['ALUMNO'],
+      })
+      .then(() => {
+        Logger.debug('User ALUMNO created');
       })
       .catch((error) => {
         Logger.error(error);
