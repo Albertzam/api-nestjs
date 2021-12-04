@@ -76,4 +76,31 @@ export class CurseService {
       return user;
     } else throw new HttpException('Curso no disponible', HttpStatus.CONFLICT);
   }
+
+  async getCourses(idStudent: string) {
+    let courses = await this.courseEntity.find({
+      select: ['userId', 'id', 'name'],
+      where: { students: { $in: [idStudent] }, status: 'A' },
+    });
+
+    if (courses) {
+      const teachers = courses.map((u) => u.userId);
+      const teachersFind = await this.userRepository.findByIds(teachers, {
+        select: ['nombre', 'apellido'],
+      });
+      let final = [];
+      teachersFind.forEach((u, i) => {
+        return courses.map((e) => {
+          if (e.userId === u.id.toString()) {
+            final.push({
+              id: e.id,
+              nombreClase: e.name,
+              nombre: `${u.nombre} ${u.apellido} ${u.segApe ? u.segApe : ''}`,
+            });
+          }
+        });
+      });
+      return final;
+    }
+  }
 }

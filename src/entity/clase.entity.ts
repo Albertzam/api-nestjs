@@ -17,7 +17,7 @@ export class ClaseEntidad {
   name: string;
 
   @Column()
-  userId: string;
+  userId: string | ObjectID;
 
   @Column()
   createdAt: Date;

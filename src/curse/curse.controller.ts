@@ -55,4 +55,14 @@ export class CurseController {
   async getStudents(@Param('idCourse') idCourse: string) {
     return await this.courseService.getStudents(idCourse);
   }
+
+  @Auth({
+    possession: AppPossession.ANY,
+    action: AppActions.READ,
+    resource: generalResources.ALUMNO,
+  })
+  @Get('/get-courses')
+  async getCourses(@Req() req) {
+    return await this.courseService.getCourses(req.user.id);
+  }
 }
