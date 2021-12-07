@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -9,9 +10,9 @@ import {
 import { UserService } from './user.service';
 import { Auth } from '../decorator';
 import { AppActions, AppPossession, generalResources } from '../roles';
-import { UserGeneralDTO } from 'src/dto/prof';
-import { UserLogin } from 'src/dto/user.dto';
-import { IEmail } from 'src/interface/course.interface';
+import { UserGeneralDTO } from '../dto/prof';
+import { UserLogin } from '../dto/user.dto';
+import { IEmail } from '../interface/course.interface';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -41,5 +42,15 @@ export class UserController {
   @Get('/get-all')
   async getAllWorks() {
     return 'prueba permisos solo tiene acceso el ROL MAESTRO';
+  }
+
+  @Auth({
+    possession: AppPossession.ANY,
+    action: AppActions.READ,
+    resource: generalResources.CLASE,
+  })
+  @Post('/delete')
+  async deleteUser(@Body() email: { email: string }) {
+    return await this.userService.deleteUser(email.email);
   }
 }

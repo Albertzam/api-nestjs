@@ -73,4 +73,8 @@ export class UserService {
       };
     }
   }
+
+  async deleteUser(email: string) {
+    await this.userRepository.delete({ email: email });
+  }
 }

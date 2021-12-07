@@ -1,4 +1,5 @@
 export interface IUserGeneral {
+  id?: string;
   nombre: string;
   apellido: string;
   segApe?: string;

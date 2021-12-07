@@ -1,11 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClaseEntidad } from 'src/entity/clase.entity';
-import { ClassromEntity } from 'src/entity/classrom.entity';
-import { UserGeneral } from 'src/entity/user_general.entity';
-import { IAlumnCourse, ICourse } from 'src/interface/course.interface';
+import { ClaseEntidad } from '../entity/clase.entity';
+import { UserGeneral } from '../entity/user_general.entity';
+import {
+  IAlumnCourse,
+  ICourse,
+  Ilista,
+  INewWork,
+} from '../interface/course.interface';
 import { MongoRepository } from 'typeorm';
-
+import * as moment from 'moment';
+import { ListaEntidad } from '../entity/list.entity';
+import { WorkEntidad } from '../entity/work.entity';
+import { IUserGeneral } from '../interface/prof.interface';
 @Injectable()
 export class CurseService {
   constructor(
@@ -13,6 +20,10 @@ export class CurseService {
     private courseEntity: MongoRepository<ClaseEntidad>,
     @InjectRepository(UserGeneral)
     private readonly userRepository: MongoRepository<UserGeneral>,
+    @InjectRepository(ListaEntidad)
+    private readonly listRepository: MongoRepository<ListaEntidad>,
+    @InjectRepository(WorkEntidad)
+    private readonly workRepository: MongoRepository<WorkEntidad>,
   ) {}
 
   async registerCourse(newCourse: ICourse) {
@@ -103,4 +114,155 @@ export class CurseService {
       return final;
     }
   }
+
+  async registerAsist(lista: Ilista) {
+    const listExist = await this.listRepository.findOne({
+      idCourse: lista.idCourse,
+    });
+
+    if (listExist) return this.updateList(lista);
+    else return this.createList(lista);
+  }
+
+  private async createList(lista: Ilista) {
+    let fecha = moment();
+    const list = await this.listRepository.create({
+      idCourse: lista.idCourse,
+      lista: [{ fecha: fecha.format('DD-MM-YYYY'), students: lista.students }],
+    });
+    await this.listRepository.save(list);
+    return list;
+    /*let fecha = moment();
+    const list = await this.listRepository.create({
+      idCourse: lista.idCourse,
+      lista: [{ fecha: fecha.format('DD-MM-YYYY'), students: lista.students }],
+    });
+    await this.listRepository.save(list);
+    return list;*/
+  }
+
+  private async updateList(lista: Ilista) {
+    let fecha = moment();
+    const listAux = await this.listRepository.findOne({
+      idCourse: lista.idCourse,
+    });
+
+    if (listAux.lista.find((u) => u.fecha === fecha.format('DD-MM-YYYY'))) {
+      listAux.idCourse = lista.idCourse;
+
+      listAux.lista.forEach((u) => {
+        if (u.fecha === fecha.format('DD-MM-YYYY')) {
+          u.students = lista.students;
+        }
+      });
+      await this.listRepository.update(
+        { idCourse: lista.idCourse },
+        { lista: listAux.lista },
+      );
+      return {
+        message: `Lista actualizada ${fecha.format('DD-MM-YYYY')}`,
+      };
+    }
+
+    listAux.idCourse = lista.idCourse;
+    listAux.lista.push({
+      fecha: fecha.format('DD-MM-YYYY'),
+      students: lista.students,
+    });
+    const list = await this.listRepository.save(listAux);
+    await this.listRepository.update(
+      { idCourse: lista.idCourse },
+      { lista: listAux.lista },
+    );
+    return list;
+
+    /* const listAux = await this.listRepository.findOne({
+      idCourse: lista.idCourse,
+    });
+    if (listAux.lista.find((u) => u.fecha === fecha.format('DD-MM-YYYY'))) {
+      listAux.idCourse = lista.idCourse;
+      let auxFechaList = listAux.lista.find(
+        (u) => u.fecha === fecha.format('DD-MM-YYYY'),
+      );
+      //Para agregar que si vinieron despues o llegaron con retardo
+      const aux = listAux.lista.filter(
+        (u) => u.fecha !== fecha.format('DD-MM-YYYY'),
+      );
+      auxFechaList.students = [...auxFechaList.students, ...lista.students];
+      await this.listRepository.update(
+        { idCourse: lista.idCourse },
+        { lista: [...aux, auxFechaList] },
+      );
+      return {
+        message: `Se actualizo la lista de hoy ${fecha.format('DD-MM-YYYY')}`,
+      };
+    }
+    listAux.idCourse = lista.idCourse;
+    listAux.lista.push({
+      fecha: fecha.format('DD-MM-YYYY'),
+      students: lista.students,
+    });
+    const list = await this.listRepository.save(listAux);
+    await this.listRepository.update(
+      { idCourse: lista.idCourse },
+      { lista: listAux.lista },
+    );
+    return list;*/
+  }
+
+  /**
+   *
+   * @param idCourse
+   * @returns la lista de los alumnos si fueron o no
+   */
+  async getList(idCourse: string) {
+    let fecha = moment();
+    const listFecha = await this.listRepository.findOne({ idCourse: idCourse });
+    const list = await this.courseEntity.findOne(idCourse);
+
+    let studentList = [];
+    listFecha.lista.forEach((u) => {
+      if (u.fecha === fecha.format('DD-MM-YYYY')) {
+        studentList = u.students;
+      }
+    });
+
+    if (studentList.length > 0) return studentList;
+
+    const user: UserGeneral[] = await this.userRepository.findByIds(
+      list.students,
+    );
+    list.students.forEach((u) =>
+      user.forEach((e) => {
+        if (e.id.toString() === u) {
+          studentList.push({ idStudent: e.id, nombre: e.nombre, status: 'N' });
+        }
+      }),
+    );
+    return studentList;
+    /*console.log(listFecha);
+    listFecha.lista.forEach((u) => {
+      if (u.fecha === fecha.format('DD-MM-YYYY')) {
+        console.log(u.students);
+        return u.students;
+      } else {
+        return 'No existe de esta fecha';
+      }
+    });*/
+  }
+
+  async registerWork(work: INewWork) {
+    const workExist = await this.workRepository.find({
+      idCourse: work.idCourse,
+    });
+
+    if (workExist) {
+    } else {
+      return this.createWork(work);
+    }
+  }
+
+  async createWork(work: INewWork) {}
+
+  async updateWork(work: INewWork) {}
 }

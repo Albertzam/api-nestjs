@@ -5,13 +5,15 @@ import {
   Param,
   Post,
   Req,
+  UploadedFile,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { Auth } from 'src/decorator';
-import { CourseDTO, NewStudentDTO } from 'src/dto/course.dto';
-import { IAlumnCourse, ICourseRegister } from 'src/interface/course.interface';
-import { AppActions, AppPossession, generalResources } from 'src/roles';
+import { Auth } from '../decorator';
+import { CourseDTO, NewStudentDTO } from '../dto/course.dto';
+import { IAlumnCourse, Ilista } from '../interface/course.interface';
+import { AppActions, AppPossession, generalResources } from '../roles';
 import { CurseService } from './curse.service';
 
 @Controller('curse')
@@ -65,4 +67,46 @@ export class CurseController {
   async getCourses(@Req() req) {
     return await this.courseService.getCourses(req.user.id);
   }
+
+  @Auth({
+    possession: AppPossession.ANY,
+    action: AppActions.READ,
+    resource: generalResources.CLASE,
+  })
+  @Post('/register-asist')
+  async registerList(@Body() listStudents: Ilista) {
+    return this.courseService.registerAsist(listStudents);
+  }
+  @Auth({
+    possession: AppPossession.ANY,
+    action: AppActions.READ,
+    resource: generalResources.CLASE,
+  })
+  @Get('/get-list/:idCourse')
+  async getList(@Param('idCourse') idCourse) {
+    return this.courseService.getList(idCourse);
+  }
+  @Auth({
+    possession: AppPossession.ANY,
+    action: AppActions.READ,
+    resource: generalResources.CLASE,
+  })
+  @Get('/get-list/:fecha')
+  async getFecha(@Param('fecha') fecha) {
+    return;
+  }
+
+  @Auth({
+    possession: AppPossession.ANY,
+    action: AppActions.READ,
+    resource: generalResources.CLASE,
+  })
+  @Post('/register-work')
+  async registerWork(@Body() newWork) {}
+
+  /*@Post('/upload-work')
+  @UseInterceptors(FileInterceptor('file'))
+  async registerWork(@UploadedFile() file, @Body() newWork) {
+    console.log(file);
+  }*/
 }

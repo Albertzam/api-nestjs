@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   mongo:
+    container_name: mongo
     image: mongo:4.4.0-rc7-bionic
     restart: always
     environment:
@@ -15,3 +16,17 @@ services:
 
     ports:
       - '27018:27017'
+  #myapp:
+  # container_name: myapp
+  #  build:
+  #    context: ..
+  #    dockerfile: docker/Dockerfile
+  #  volumes:
+  #    - ../:/usr/src/app
+  #    - ../node_modules:/usr/src/app/node_modules
+  #  ports:
+  #    - 3000:3000
+  #    - 9229:9229
+  #    - 3100:8080
+  #  depends_on:
+  #    - mongo
