@@ -35,6 +35,8 @@ export class UserService {
       } else {
         throw new HttpException('Datos invalidos', HttpStatus.BAD_REQUEST);
       }
+    } else {
+      throw new HttpException('Datos invalidos', HttpStatus.BAD_REQUEST);
     }
 
     return;

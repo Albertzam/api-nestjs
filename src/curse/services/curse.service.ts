@@ -1,18 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClaseEntidad } from '../entity/clase.entity';
-import { UserGeneral } from '../entity/user_general.entity';
+import { ClaseEntidad } from '../../entity/clase.entity';
+import { UserGeneral } from '../../entity/user_general.entity';
 import {
   IAlumnCourse,
   ICourse,
   Ilista,
   INewWork,
-} from '../interface/course.interface';
+} from '../../interface/course.interface';
 import { MongoRepository } from 'typeorm';
 import * as moment from 'moment';
-import { ListaEntidad } from '../entity/list.entity';
-import { WorkEntidad } from '../entity/work.entity';
-import { IUserGeneral } from '../interface/prof.interface';
+import { ListaEntidad } from '../../entity/list.entity';
+import { WorkEntidad } from '../../entity/work.entity';
+
 @Injectable()
 export class CurseService {
   constructor(
@@ -41,7 +41,12 @@ export class CurseService {
         { id: course.id },
         { idCourse: course.id.toString().substr(-7, 7) },
       );
+      const final = {
+        ...course,
+        idCourse: course.id.toString().substr(-7, 7),
+      };
       return {
+        course: final,
         message: 'Curso creado',
       };
     }
@@ -91,7 +96,10 @@ export class CurseService {
   async getCourses(idStudent: string) {
     let courses = await this.courseEntity.find({
       select: ['userId', 'id', 'name'],
-      where: { students: { $in: [idStudent] }, status: 'A' },
+      where: {
+        students: { $in: [idStudent] },
+        status: 'A',
+      },
     });
 
     if (courses) {
@@ -219,15 +227,17 @@ export class CurseService {
     let fecha = moment();
     const listFecha = await this.listRepository.findOne({ idCourse: idCourse });
     const list = await this.courseEntity.findOne(idCourse);
-
+    let exit: boolean;
     let studentList = [];
-    listFecha.lista.forEach((u) => {
-      if (u.fecha === fecha.format('DD-MM-YYYY')) {
-        studentList = u.students;
-      }
-    });
+    if (listFecha)
+      listFecha.lista.forEach((u) => {
+        if (u.fecha === fecha.format('DD-MM-YYYY')) {
+          studentList = u.students;
+          exit = true;
+        }
+      });
 
-    if (studentList.length > 0) return studentList;
+    if (exit) return studentList;
 
     const user: UserGeneral[] = await this.userRepository.findByIds(
       list.students,
@@ -235,7 +245,7 @@ export class CurseService {
     list.students.forEach((u) =>
       user.forEach((e) => {
         if (e.id.toString() === u) {
-          studentList.push({ idStudent: e.id, nombre: e.nombre, status: 'N' });
+          studentList.push({ idStudent: e.id, nombre: e.nombre, status: 'Y' });
         }
       }),
     );
@@ -265,4 +275,8 @@ export class CurseService {
   async createWork(work: INewWork) {}
 
   async updateWork(work: INewWork) {}
+
+  async deleteTemp(name: string) {
+    await this.courseEntity.delete({ name: name });
+  }
 }

@@ -1,11 +1,11 @@
 import { Logger, Module } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AccessControlModule } from 'nest-access-control';
-import { roles } from 'src/roles';
+import { roles } from '../roles';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
-import { JwtStrategy } from 'src/auth/jwt.strategy';
+import { AuthModule } from '../auth/auth.module';
+import { JwtStrategy } from '../auth/jwt.strategy';
 import { UserGeneral } from '../entity/user_general.entity';
 import { UserController } from './user.controller';
 import * as dotenv from 'dotenv';

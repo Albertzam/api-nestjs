@@ -18,10 +18,10 @@ export class WorkEntidad {
   name: string;
 
   @Column()
-  createdAt: Date;
+  createdAt: number;
 
   @Column()
-  dateLimit: Date;
+  dateLimit: number;
 
   @Column()
   status: string;
@@ -31,6 +31,8 @@ export class WorkEntidad {
 
   @BeforeInsert()
   async createDate(): Promise<void> {
-    this.createdAt = new Date();
+    this.createdAt = new Date().valueOf();
+    this.status = 'A';
+    this.students = [];
   }
 }

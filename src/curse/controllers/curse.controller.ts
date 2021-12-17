@@ -10,11 +10,11 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { Auth } from '../decorator';
-import { CourseDTO, NewStudentDTO } from '../dto/course.dto';
-import { IAlumnCourse, Ilista } from '../interface/course.interface';
-import { AppActions, AppPossession, generalResources } from '../roles';
-import { CurseService } from './curse.service';
+import { Auth } from '../../decorator';
+import { CourseDTO, ListStudents, NewStudentDTO } from '../../dto/course.dto';
+import { IAlumnCourse, Ilista } from '../../interface/course.interface';
+import { AppActions, AppPossession, generalResources } from '../../roles';
+import { CurseService } from '../services/curse.service';
 
 @Controller('curse')
 export class CurseController {
@@ -27,6 +27,7 @@ export class CurseController {
   @Post('/register-course')
   @UsePipes(ValidationPipe)
   async registerCourse(@Body() newCurse: CourseDTO, @Req() req) {
+    console.log(newCurse);
     return await this.courseService.registerCourse({
       name: newCurse.name,
       userId: req.user.id,
@@ -73,8 +74,9 @@ export class CurseController {
     action: AppActions.READ,
     resource: generalResources.CLASE,
   })
+  @UsePipes(ValidationPipe)
   @Post('/register-asist')
-  async registerList(@Body() listStudents: Ilista) {
+  async registerList(@Body() listStudents: ListStudents) {
     return this.courseService.registerAsist(listStudents);
   }
   @Auth({
@@ -104,6 +106,11 @@ export class CurseController {
   @Post('/register-work')
   async registerWork(@Body() newWork) {}
 
+  /**PRUEBAS */
+  @Post('/delete')
+  async deleteTemp(@Body() name: { name: string }) {
+    return await this.courseService.deleteTemp(name.name);
+  }
   /*@Post('/upload-work')
   @UseInterceptors(FileInterceptor('file'))
   async registerWork(@UploadedFile() file, @Body() newWork) {

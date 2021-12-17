@@ -27,6 +27,9 @@ export class ClaseEntidad {
 
   @Column()
   status: string;
+
+  @Column()
+  deletedAt?: Date;
   @BeforeInsert()
   async createDate(): Promise<void> {
     this.createdAt = new Date();

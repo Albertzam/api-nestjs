@@ -52,7 +52,12 @@ export interface INewWork {
 
 export interface IArrayWork {
   idStudent: string;
-  urlWork: string;
+  calif: number;
   createdAt: string;
   status: string;
+}
+
+export interface ICourseUpdate {
+  name: string;
+  id: string;
 }

@@ -22,8 +22,19 @@ describe('Register user endpoint', () => {
    *
    * .toEqueal()
    * Se usa  para comparar de forma recursiva todas las propiedades de las instancias de objetos
+   *
+   * beforeAll
+   * Es como un hook que se usa para hacer algo antes de lanzar el test
+   *
+   * afterAll
+   * realiza una accion al terminar el test
+   *
+   * Una buena practica es si se hicieron inserts en la BD eliminar esos campos al terminar el test
+   * por eso uso el AfterAll para eliminar el usuario test
+   *
+   * Se tienen mas validaciones en la BD que puedo manejar dentro de los test en el campo de usuarios
    */
-  it('Debe registrar usuarios con exito', async () => {
+  it('registra usuarios con exito', async () => {
     const res = await axios.post(`${API}/user/register`, user);
     expect(res.status).toEqual(201);
     expect(res.data).toHaveProperty('nombre', user.nombre);
@@ -45,7 +56,7 @@ describe('Register user endpoint', () => {
     );
   });
 
-  it('No se registra el usuario por parametros invalidos (BadRequest)', async () => {
+  it('No se registra el usuario por parametros invalidos (falta email) (BadRequest)', async () => {
     let user = {
       nombre: 'test',
       apellido: 'test',
