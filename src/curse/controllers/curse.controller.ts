@@ -98,13 +98,7 @@ export class CurseController {
     return;
   }
 
-  @Auth({
-    possession: AppPossession.ANY,
-    action: AppActions.READ,
-    resource: generalResources.CLASE,
-  })
-  @Post('/register-work')
-  async registerWork(@Body() newWork) {}
+
 
   /**PRUEBAS */
   @Post('/delete')

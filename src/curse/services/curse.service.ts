@@ -70,6 +70,16 @@ export class CurseService {
           { idCourse: newStudent.idCourse },
           { students: studentExist.students },
         );
+        /**
+         * Agregar tareas al alumno nuevo
+         */
+        console.log(studentExist);
+        const aux = await this.workRepository.findOne({
+          idCourse: studentExist.id.toString(),
+        });
+
+        aux.students.push({ idStudent: newStudent.idAlumn, calif: 0 });
+        await this.workRepository.update(aux.id, { students: aux.students });
         return {
           nameCourse: `Te uniste al curso de ${updateStudent.name}`,
         };
@@ -223,13 +233,13 @@ export class CurseService {
    * @param idCourse
    * @returns la lista de los alumnos si fueron o no
    */
-  async getList(idCourse: string) {
+  async getList(idCourse: string, calif = false) {
     let fecha = moment();
     const listFecha = await this.listRepository.findOne({ idCourse: idCourse });
     const list = await this.courseEntity.findOne(idCourse);
     let exit: boolean;
     let studentList = [];
-    if (listFecha)
+    if (listFecha && !calif)
       listFecha.lista.forEach((u) => {
         if (u.fecha === fecha.format('DD-MM-YYYY')) {
           studentList = u.students;
@@ -241,11 +251,22 @@ export class CurseService {
 
     const user: UserGeneral[] = await this.userRepository.findByIds(
       list.students,
+      { where: { status: 'A' } },
     );
+    console.log(user);
     list.students.forEach((u) =>
       user.forEach((e) => {
-        if (e.id.toString() === u) {
-          studentList.push({ idStudent: e.id, nombre: e.nombre, status: 'Y' });
+        if (e.id.toString() === u.toString() && !calif) {
+          studentList.push({
+            idStudent: e.id,
+            nombre: `${e.apellido} ${e.segApe} ${e.nombre}`,
+            status: 'Y',
+          });
+        } else if (e.id.toString() === u.toString() && calif) {
+          studentList.push({
+            idStudent: e.id,
+            calif: 0,
+          });
         }
       }),
     );

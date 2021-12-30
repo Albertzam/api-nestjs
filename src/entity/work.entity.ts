@@ -18,6 +18,8 @@ export class WorkEntidad {
   name: string;
 
   @Column()
+  descripcion: string;
+  @Column()
   createdAt: number;
 
   @Column()
@@ -33,6 +35,5 @@ export class WorkEntidad {
   async createDate(): Promise<void> {
     this.createdAt = new Date().valueOf();
     this.status = 'A';
-    this.students = [];
   }
 }

@@ -53,8 +53,8 @@ export interface INewWork {
 export interface IArrayWork {
   idStudent: string;
   calif: number;
-  createdAt: string;
-  status: string;
+  createdAt?: string;
+  status?: string;
 }
 
 export interface ICourseUpdate {

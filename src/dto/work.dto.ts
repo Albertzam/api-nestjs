@@ -19,6 +19,11 @@ export class NewWorkDto {
   @ApiProperty()
   name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  descripcion: string;
+
   @IsNotEmpty()
   @ApiProperty()
   dateLimit: number;
