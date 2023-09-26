@@ -8,7 +8,7 @@ aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 aws configure set default.region us-east-2
 # Nombre del archivo local
-LOCAL_FILE=../scripts/version.txt
+LOCAL_FILE=./version.txt
 # Nombre del bucket de S3
 S3_BUCKET=circle-ci-versions
 # Ruta en S3 donde se almacenará el archivo
