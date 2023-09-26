@@ -15,12 +15,35 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: 'Say hello'
+          command: 'echo Hello, World!'
+      - run:
+          name: Testing upload
+          command: echo "$CIRCLE_SHA1" > ./scripts/version.txt
+      - run: chmod +x ./k8s/uploadAws.sh && ./k8s/uploadAws.sh
+  testing:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run: chmod +x ./k8s/downloadAws.sh && ./k8s/downloadAws.sh
+      - run: ls
+      - run: cd scripts && ls
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
     jobs:
-      - say-hello
+      - say-hello:
+          filters:
+            branches:
+              only:
+                - circleci-project-setup
+  test:
+    jobs:
+      - testing:
+          filters:
+            branches:
+              only:
+                - master
