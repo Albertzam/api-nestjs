@@ -19,7 +19,7 @@ jobs:
           command: 'echo Hello, World!'
       - run:
           name: Testing upload
-          command: echo "$CIRCLE_SHA1" > ./scripts/version.txt
+          command: echo "$CIRCLE_SHA1" > ./k8s/version.txt
       - run: chmod +x ./k8s/uploadAws.sh && ./k8s/uploadAws.sh
   testing:
     docker:
