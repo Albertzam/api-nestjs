@@ -40,6 +40,8 @@ workflows:
             branches:
               only:
                 - circleci-project-setup
+          context:
+            - aws
   test:
     jobs:
       - testing:
@@ -47,3 +49,5 @@ workflows:
             branches:
               only:
                 - master
+          context:
+            - aws

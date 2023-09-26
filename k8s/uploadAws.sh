@@ -14,4 +14,4 @@ S3_BUCKET=circle-ci-versions
 # Ruta en S3 donde se almacenará el archivo
 S3_KEY=versions/version.txt
 # Cargar el archivo en S3
-aws s3 cp $LOCAL_FILE s3://$S3_BUCKET/$S3_KEY
+aws s3 cp "$LOCAL_FILE" "s3://$S3_BUCKET/$S3_KEY"
