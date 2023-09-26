@@ -16,7 +16,7 @@ S3_BUCKET=circle-ci-versions
 # Cargar el archivo en S3
 
 S3_SOURCE=s3://$S3_BUCKET/versions/version.txt
-LOCAL_DESTINATION=./scripts/version.txt
+LOCAL_DESTINATION=./k8s/version.txt
 aws s3 cp "$S3_SOURCE" "$LOCAL_DESTINATION"
 
 cat $LOCAL_DESTINATION
