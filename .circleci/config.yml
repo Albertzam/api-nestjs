@@ -28,6 +28,7 @@ jobs:
       - checkout
       - run: chmod +x ./k8s/downloadAws.sh && ./k8s/downloadAws.sh
       - run: ls
+      - run: cat ./k8s/version.txt
       - run: cd scripts && ls
 
 # Orchestrate jobs using workflows
