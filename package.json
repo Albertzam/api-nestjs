@@ -36,7 +36,7 @@
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
-    "cloudinary": "^1.27.1",
+    "cloudinary": "^1.41.3",
     "moment": "^2.29.1",
     "mongodb": "3",
     "mongoose": "^6.0.14",
